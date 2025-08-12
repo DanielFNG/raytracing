@@ -1,0 +1,10 @@
+add_executable(raytracer
+        main.cpp
+        Vec3.cpp
+        Ray.cpp
+        HittableEntity.cpp
+        Sphere.cpp
+        Interval.cpp
+        Camera.cpp
+        Hit.cpp
+)
