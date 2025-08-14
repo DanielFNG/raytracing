@@ -140,27 +140,6 @@ Vec3 Camera::colourPixel(const Vec3& pixel_location, const Scene& scene) const
     return colour / static_cast<double>(subpixel_locations.size());
 }
 
-Vec3 Camera::samplePixelColour(const Vec3& pixel_location, const Scene& scene) const
-{
-    // Initialise the colour at the centre point of the pixel (1 sample)
-    const Ray ray_to_pixel{origin, pixel_location - origin};
-    Vec3 pixel_colour{ray_colour(ray_to_pixel, scene, config.max_depth)};
-
-    // Take config.anti_aliasing_samples random samples (1 + config.anti_aliasing_samples samples)
-    int i{};
-    //#pragma omp parallel for  // This needs significant anti_aliasing_samples to be much faster than Release
-    for (i = 1; i < config.anti_aliasing_samples; ++i)
-    {
-        //std::println(std::clog, "hello from thread {}, total threads {}", omp_get_thread_num(), omp_get_num_threads());
-        const Vec3 subpixel_location{getRandomSubpixel(pixel_location)};
-        const Ray ray_to_subpixel{origin, subpixel_location - origin};
-        pixel_colour += ray_colour(ray_to_subpixel, scene, config.max_depth);
-        // If we have no samples, this should never execute, right?
-    }
-
-    return pixel_colour/(1 + config.anti_aliasing_samples);
-}
-
 Vec3 Camera::getRandomSubpixel(const Vec3& pixel_location) const
 {
     Vec3 random_multiplier{Random::getRandom(DefinedIntervals::random_pixel), Random::getRandom(DefinedIntervals::random_pixel), 0};

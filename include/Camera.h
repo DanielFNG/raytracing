@@ -35,7 +35,6 @@ private:
     std::vector<Vec3> samplePixel(const Vec3& pixel_location) const;
     Vec3 colourPixel(const Vec3& pixel_location, const Scene& scene) const;
     Vec3 colourSubpixel(const Vec3& subpixel_location, const Scene& scene) const;
-    Vec3 samplePixelColour(const Vec3& pixel_location, const Scene& scene) const;
     Vec3 getRandomSubpixel(const Vec3& pixel_location) const;
 
     Vec3 ray_colour(const Ray& ray, const Scene& scene, const int current_depth) const;
