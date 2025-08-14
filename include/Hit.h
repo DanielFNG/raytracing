@@ -1,7 +1,6 @@
 #ifndef HIT_H
 #define HIT_H
 
-#include "Ray.h"
 #include "Vec3.h"
 #include "Material.h"
 
@@ -21,9 +20,6 @@ public:
     explicit operator bool() const {return material != nullptr;}
 
 private:
-    Vec3 scatter() const;
-    Vec3 reflect(const Ray& ray) const;
-
     double t{};
     Vec3 point{};
     Vec3 normal{};

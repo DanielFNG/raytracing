@@ -9,11 +9,11 @@
 struct CameraConfig
 {
     double aspect_ratio{16.0/9.0};
-    int image_width{1920};
+    int image_width{800};
     double viewport_height{2.0};
     double focal_length{1.0};
-    int anti_aliasing_samples{500};
-    int max_depth{50};
+    int anti_aliasing_samples{50};
+    int max_depth{10};
 };
 
 class Camera {
@@ -37,7 +37,7 @@ private:
     Vec3 colourSubpixel(const Vec3& subpixel_location, const Scene& scene) const;
     Vec3 getRandomSubpixel(const Vec3& pixel_location) const;
 
-    Vec3 ray_colour(const Ray& ray, const Scene& scene, const int current_depth) const;
+    Vec3 ray_colour(Ray& ray, const Scene& scene) const;
     Vec3 background_colour(const Ray& ray) const;
 
     CameraConfig config{};

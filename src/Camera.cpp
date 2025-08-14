@@ -125,8 +125,8 @@ std::vector<Vec3> Camera::samplePixel(const Vec3& pixel_location) const
 
 Vec3 Camera::colourSubpixel(const Vec3& subpixel_location, const Scene& scene) const
 {
-    const Ray ray_to_pixel{origin, subpixel_location - origin};
-    return ray_colour(ray_to_pixel, scene, config.max_depth);
+    Ray ray_to_pixel{origin, subpixel_location - origin, scene.getRefractiveIndex()};
+    return ray_colour(ray_to_pixel, scene);
 }
 
 Vec3 Camera::colourPixel(const Vec3& pixel_location, const Scene& scene) const
@@ -146,23 +146,19 @@ Vec3 Camera::getRandomSubpixel(const Vec3& pixel_location) const
     return pixel_location + random_multiplier*(pixel_dx + pixel_dy);
 }
 
-Vec3 Camera::ray_colour(const Ray& ray, const Scene& scene, const int current_depth) const
+Vec3 Camera::ray_colour(Ray& ray, const Scene& scene) const
 {
-    if (current_depth == 0)
+    Vec3 attenuation{1,1,1};
+    for (int i{0}; i < config.max_depth; ++i)
     {
-        return Vec3{0,0,0};
+        const Hit hit{scene.getClosestHit(ray, Interval(0.001, Constants::infinity))};
+        if (!hit)
+        {
+            return attenuation*background_colour(ray);
+        }
+        attenuation = attenuation*ray.attenuate(hit);
     }
-
-    std::shared_ptr hit{getClosestHit(ray, scene.getHittableEntities(), Interval(0.001, Constants::infinity))};
-    if (hit != nullptr)
-    {
-        Vec3 attenuation {hit->attenuate()};  // For now this has no absorbance
-        Ray next_ray {hit->bounce(ray)};
-        return attenuation * ray_colour(next_ray, scene, current_depth-1);
-        //Shade by normal: return 0.5 * (hit->getNormal() + Vec3{1,1,1});  // Make it positive and squeeze it within 0-1
-    }
-
-    return background_colour(ray);
+    return Vec3{0,0,0};
 }
 
 Vec3 Camera::background_colour(const Ray& ray) const

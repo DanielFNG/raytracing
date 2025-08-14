@@ -6,5 +6,5 @@ add_executable(raytracer
         Sphere.cpp
         Interval.cpp
         Camera.cpp
-        Hit.cpp
+        Scene.cpp
 )
