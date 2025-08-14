@@ -59,7 +59,7 @@ void Camera::renderParallel(const Scene& scene) const
 {
     int n_rows{image_height};
     std::clog << "Rendering rows. Remaining: " << n_rows << "\n";
-    std::vector<Vec3> pixel_colours(image_height*config.image_width);
+    std::vector<Vec3> pixel_colours(static_cast<size_t>(image_height*config.image_width));
     int j{};
     #pragma omp parallel for
     for (j = 0; j < image_height; ++j)
@@ -67,7 +67,7 @@ void Camera::renderParallel(const Scene& scene) const
         for (int i{0}; i < config.image_width; ++i)
         {
             Vec3 pixel_location{pixel_origin + (i * pixel_dx) + (j * pixel_dy)};
-            pixel_colours[i + j*config.image_width] = {colourPixel(pixel_location, scene)};
+            pixel_colours[static_cast<size_t>(i + j*config.image_width)] = {colourPixel(pixel_location, scene)};
         }
         std::clog << "Rendering rows. Remaining: " << n_rows << "\n";
         n_rows -= 1;

@@ -3,12 +3,12 @@
 
 double& Vec3::operator[](const int i)
 {
-    return values[i];
+    return values[static_cast<size_t>(i)];
 };
 
 double Vec3::operator[](const int i) const
 {
-    return values[i];
+    return values[static_cast<size_t>(i)];
 };
 
 Vec3 Vec3::operator-() const

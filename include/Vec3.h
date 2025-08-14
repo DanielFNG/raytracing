@@ -9,16 +9,16 @@ struct Vec3
 {
     std::array<double, 3> values{};
 
-    double& operator[](const int i);
-    double operator[](const int i) const;
+    double& operator[](int i);
+    double operator[](int i) const;
 
     Vec3 operator-() const;
 
     Vec3& operator+=(const Vec3& vec3);
 
-    Vec3& operator*=(const double t);
+    Vec3& operator*=(double t);
 
-    Vec3& operator/=(const double t);
+    Vec3& operator/=(double t);
 
     double length() const;
 
@@ -35,11 +35,11 @@ Vec3 operator-(const Vec3& v1, const Vec3& v2);
 
 Vec3 operator*(const Vec3& v1, const Vec3& v2);
 
-Vec3 operator*(const double t, const Vec3& vec3);
+Vec3 operator*(double t, const Vec3& vec3);
 
-Vec3 operator*(const Vec3& vec3, const double t);
+Vec3 operator*(const Vec3& vec3, double t);
 
-Vec3 operator/(const Vec3& vec3, const double t);
+Vec3 operator/(const Vec3& vec3, double t);
 
 double dot(const Vec3& v1, const Vec3& v2);
 
