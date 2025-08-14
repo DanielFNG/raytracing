@@ -4,8 +4,6 @@
 #include "Ray.h"
 #include "Hit.h"
 #include "Interval.h"
-#include <vector>
-#include <memory>
 #include "Material.h"
 
 bool inRange(double x, double a, double b);
@@ -27,7 +25,5 @@ public:
 private:
     Material material;
 };
-
-std::shared_ptr<Hit> getClosestHit(const Ray& ray, const std::vector<std::shared_ptr<HittableEntity>>& entities, const Interval& interval);
 
 #endif //HITTABLEENTITY_H
