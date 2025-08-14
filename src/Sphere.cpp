@@ -1,7 +1,7 @@
 #include "Sphere.h"
 #include <cmath>
 
-std::shared_ptr<Hit> Sphere::getRayHit(const Ray& ray, const Interval& interval) const
+Hit Sphere::getRayHit(const Ray& ray, const Interval& interval) const
 {
     const Vec3 origin_to_origin {origin - ray.getOrigin()};
     const double a{ray.getDirection().length_squared()};
@@ -12,7 +12,7 @@ std::shared_ptr<Hit> Sphere::getRayHit(const Ray& ray, const Interval& interval)
     const double second_part{std::sqrt(discriminant)/a};
     if (discriminant < 0)
     {
-        return nullptr;
+        return Hit();
     }
     double root {first_part - second_part};
     if (!interval.contains(root))
@@ -20,9 +20,9 @@ std::shared_ptr<Hit> Sphere::getRayHit(const Ray& ray, const Interval& interval)
         root = first_part + second_part;
         if (!interval.contains(root))
         {
-            return nullptr;
+            return Hit();
         }
     }
     Vec3 point{ray.at(root)};
-    return std::make_shared<Hit>(root, point, (point - origin)/radius, getMaterial());
+    return Hit{root, point, (point - origin)/radius, getMaterial()};
 }

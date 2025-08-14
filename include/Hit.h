@@ -8,16 +8,17 @@
 class Hit {
 public:
     Hit() = default;
+
     Hit(const double t, const Vec3& point, const Vec3& normal, const Material& material)
-        : t{t}, point{point}, normal{normal}, material{material}
+        : t{t}, point{point}, normal{normal}, material{&material}
     {}
 
     const Vec3& getNormal() const {return normal;}
     double getT() const {return t;}
     const Vec3& getPoint() const {return point;}
+    const Material* getMaterial() const {return material;}
 
-    Vec3 attenuate() const;
-    Ray bounce(const Ray& ray) const;
+    explicit operator bool() const {return material != nullptr;}
 
 private:
     Vec3 scatter() const;
@@ -26,8 +27,8 @@ private:
     double t{};
     Vec3 point{};
     Vec3 normal{};
-    const Material& material{};
-
+    const Material* material{nullptr};
+    // Choosing const Material* over & so that we can have failed hits with nullptr materials
 };
 
 

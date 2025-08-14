@@ -12,7 +12,7 @@ public:
         : HittableEntity(material), origin{origin}, radius{radius}
     {}
 
-    std::shared_ptr<Hit> getRayHit(const Ray& ray, const Interval& interval) const override;
+    Hit getRayHit(const Ray& ray, const Interval& interval) const override;
 
 private:
     Vec3 origin{};

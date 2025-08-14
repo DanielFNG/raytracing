@@ -18,7 +18,7 @@ public:
     }
 
     virtual ~HittableEntity() = default;
-    virtual std::shared_ptr<Hit> getRayHit(const Ray& ray, const Interval& interval) const = 0;
+    virtual Hit getRayHit(const Ray& ray, const Interval& interval) const = 0;
 
     Ray processHit(const Ray& ray, HittableEntity& entity);
 
