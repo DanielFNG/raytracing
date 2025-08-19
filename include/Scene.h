@@ -11,13 +11,21 @@ public:
     explicit Scene(const double refractive_index)
         : refractive_index{refractive_index}
     {
-    };
+    }
 
     template <typename T>
     void add(const T& hittable_entity)
     {
         static_assert(std::is_base_of_v<HittableEntity, T>, "Can only add subclasses of HittableEntity to scene");
         entities.push_back(std::make_unique<T>(hittable_entity));
+    }
+
+    template <typename T>
+    void add(T&& hittable_entity)
+    {
+
+        static_assert(std::is_base_of_v<HittableEntity, T>, "Can only add subclasses of HittableEntity to scene");
+        entities.push_back(std::make_unique<T>(std::forward<T>(hittable_entity)));
     }
 
     const std::vector<std::unique_ptr<HittableEntity>>& getHittableEntities() const {return entities;}
