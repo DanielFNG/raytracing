@@ -18,9 +18,7 @@ public:
     virtual ~HittableEntity() = default;
     virtual Hit getRayHit(const Ray& ray, const Interval& interval) const = 0;
 
-    Ray processHit(const Ray& ray, HittableEntity& entity);
-
-    const Material& getMaterial() const {return material;}
+    const Material& getMaterial() const {return *material;}
 
 private:
     const std::unique_ptr<Material> material{nullptr};
