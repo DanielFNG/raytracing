@@ -9,7 +9,7 @@ Hit Scene::getClosestHit(const Ray& ray, const Interval& interval) const
         Hit hit{entity->getRayHit(ray, Interval{interval.min, closest_so_far})};
         if (hit)
         {
-            closest_so_far = hit.getT();
+            closest_so_far = hit.t;
             closest_hit = hit;
         }
     }

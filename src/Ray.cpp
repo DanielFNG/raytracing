@@ -37,28 +37,23 @@ void Ray::scatter(const Vec3& at_point, const Vec3& at_normal)
     update(at_point, in_direction);
 }
 
-void Ray::refract(const Vec3& at_point, const Vec3& at_normal, const double refractive_index)
+void Ray::refract(const Vec3& at_point, const Vec3& at_normal, const double refractive_index, const double cosine_term, const bool entering)
 {
-    const double cosine_term {std::min(dot(normalised(direction), at_normal), 1.0)};
-    if (refracts(cosine_term, refractive_index))
+    double refractive_ratio{};
+    if (entering)
     {
-        const Vec3 perpendicular {refractive_index/refraction_log.back() * (normalised(direction) + cosine_term * at_normal)};
-        const Vec3 parallel {-std::sqrt(std::abs(1.0 - perpendicular.length_squared())) * at_normal};
-        const Vec3 refracted_direction{perpendicular + parallel};
-        if (dot(direction, at_normal) < 0)
-        {
-            enter(at_point, refracted_direction, refractive_index);
-        }
-        else
-        {
-            leave(at_point, refracted_direction);
-        }
+        refractive_ratio = getRefractiveRatio(true, refractive_index);
+        refraction_log.push_back(refractive_index);
     }
     else
     {
-        scatter(at_point, at_normal);
+        refractive_ratio = getRefractiveRatio(false);
+        refraction_log.pop_back();
     }
-
+    const Vec3 perpendicular {refractive_ratio * (normalised(direction) + cosine_term * at_normal)};
+    const Vec3 parallel {-std::sqrt(std::abs(1.0 - perpendicular.length_squared())) * at_normal};
+    const Vec3 refracted_direction{perpendicular + parallel};
+    update(at_point, refracted_direction);
 }
 
 void Ray::update(const Vec3& at_position, const Vec3& in_direction)
@@ -67,21 +62,13 @@ void Ray::update(const Vec3& at_position, const Vec3& in_direction)
     points.push_back(at_position);
 }
 
-void Ray::enter(const Vec3& at_position, const Vec3& in_direction, const double refractive_index)
+double Ray::getRefractiveRatio(const bool entering, const double refractive_index)
 {
-    update(at_position, in_direction);
-    refraction_log.push_back(refractive_index);
-}
+    if (entering)
+    {
+        return refraction_log.back()/refractive_index;
+    }
+    const size_t size {refraction_log.size()};
+    return refraction_log[size - 1]/refraction_log[size - 2];
 
-void Ray::leave(const Vec3& at_position, const Vec3& in_direction)
-{
-    update(at_position, in_direction);
-    refraction_log.pop_back();
-}
-
-bool Ray::refracts(const double cosine_term, const double refractive_index)
-{
-    double r0 {(1 - refractive_index)/(1 + refractive_index)};
-    r0 = r0*r0;
-    return (r0 + (1 - r0)*std::pow((1 - cosine_term), 5) > Random::getRandom());
 }
