@@ -3,11 +3,10 @@
 
 #include "Vec3.h"
 #include <vector>
-#include "Hit.h"
 
 class Ray {
-
 public:
+
     Ray(const Vec3& origin, const Vec3& direction, const double initial_refractive_index)
         : points{origin}, direction{direction}, refraction_log{initial_refractive_index}
     {
@@ -22,9 +21,6 @@ public:
     const Vec3& getOrigin() const {return points.back();}
     double getRefractiveIndex() const {return refraction_log.back();}
 
-    Vec3 attenuate(const Hit& hit);
-
-private:
     void reflect(const Vec3& at_point, const Vec3& at_normal, double fuzz);
     void scatter(const Vec3& at_point, const Vec3& at_normal);
     void refract(const Vec3& at_point, const Vec3& at_normal, double refractive_index);

@@ -5,15 +5,15 @@
 #include "Hit.h"
 #include "Interval.h"
 #include "Material.h"
+#include <memory>
 
 bool inRange(double x, double a, double b);
 
 class HittableEntity {
 public:
     explicit HittableEntity(const Material& material)
-        : material{material}
-    {
-    }
+        : material{material.make_unique()}
+    {}
 
     virtual ~HittableEntity() = default;
     virtual Hit getRayHit(const Ray& ray, const Interval& interval) const = 0;
@@ -23,7 +23,7 @@ public:
     const Material& getMaterial() const {return material;}
 
 private:
-    Material material;
+    const std::unique_ptr<Material> material{nullptr};
 };
 
 #endif //HITTABLEENTITY_H

@@ -156,7 +156,7 @@ Vec3 Camera::ray_colour(Ray& ray, const Scene& scene) const
         {
             return attenuation*background_colour(ray);
         }
-        attenuation = attenuation*ray.attenuate(hit);
+        attenuation = attenuation * hit.material->attenuate(ray, hit.point, hit.normal);
     }
     return Vec3{0,0,0};
 }

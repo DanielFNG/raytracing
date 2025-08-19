@@ -8,24 +8,6 @@ Vec3 Ray::at(const double t) const
     return getOrigin() + direction * t;
 }
 
-Vec3 Ray::attenuate(const Hit& hit)
-{
-    const Material* material{hit.getMaterial()};
-    if (material->reflective)
-    {
-        reflect(hit.getPoint(), hit.getNormal(), material->fuzz);
-    }
-    else if (material->refractive_index > 0)
-    {
-        refract(hit.getPoint(), hit.getNormal(), material->refractive_index);
-    }
-    else
-    {
-        scatter(hit.getPoint(), hit.getNormal());
-    }
-    return material->refractive_index > 0 ? Vec3{1.0, 1.0, 1.0} : material->albedo;
-}
-
 void Ray::reflect(const Vec3& at_point, const Vec3& at_normal, const double fuzz)
 {
     Vec3 in_direction{reflectVec3(direction, at_normal)};
