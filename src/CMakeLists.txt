@@ -7,4 +7,5 @@ add_executable(raytracer
         Interval.cpp
         Camera.cpp
         Scene.cpp
+        Material.cpp
 )

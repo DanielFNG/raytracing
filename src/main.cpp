@@ -2,6 +2,7 @@
 #include "Camera.h"
 #include "Vec3.h"
 #include "Scene.h"
+#include "Utilities.h"
 
 int main()
 {
@@ -9,11 +10,11 @@ int main()
     constexpr CameraConfig camera_config
     {
         .aspect_ratio = 16.0/9.0,
-        .image_width = 1920,
+        .image_width = 400,
         .focus_distance = 10.0,
         .field_of_view = 35,
         .defocus_angle = 0.2,
-        .anti_aliasing_samples = 100,
+        .anti_aliasing_samples = 50,
         .max_depth = 50,
     };
     Camera camera{camera_config, camera_origin};
@@ -35,21 +36,21 @@ int main()
             {
                 if (choose_mat < 0.5)
                 {
-                    const Lambertian material{getRandomVec3()*getRandomVec3()};
+                    const Lambertian material{Vec3::getRandom()*Vec3::getRandom()};
                     world.add(Sphere{centre, 0.2, material});
                 }
                 else if (choose_mat < 0.85)
                 {
                     const Reflector material
                     {
-                        getRandomVec3(Interval(0.5, 1)),
+                        Vec3::getRandom(Interval(0.5, 1)),
                         Random::getRandom(Interval(0, 0.4))
                     };
                     world.add(Sphere{centre, 0.2, material});
                 }
                 else
                 {
-                    const Refractor material{getRandomVec3(), 1.5};
+                    const Refractor material{Vec3::getRandom(), 1.5};
                     world.add(Sphere{centre, 0.2, material});
                 }
             }

@@ -9,7 +9,6 @@ struct Interval
     double max{};
 
     bool contains(double x) const;
-    bool surrounds(double x) const;
 };
 
 namespace DefinedIntervals

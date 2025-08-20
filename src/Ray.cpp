@@ -10,7 +10,7 @@ Vec3 Ray::at(const double t) const
 
 void Ray::reflect(const Vec3& at_point, const Vec3& at_normal, const double fuzz)
 {
-    Vec3 in_direction{reflectVec3(direction, at_normal)};
+    Vec3 in_direction{Vec3::getReflected(direction, at_normal)};
     if (fuzz == 0)
     {
         update(at_point, in_direction);
@@ -18,8 +18,8 @@ void Ray::reflect(const Vec3& at_point, const Vec3& at_normal, const double fuzz
     }
     while (true)
     {
-        in_direction = normalised(in_direction) + fuzz * getRandomUnitVec3();
-        if (dot(in_direction, at_normal) > 0)
+        in_direction = in_direction.getNormalised() + fuzz * Vec3::getRandomUnit();
+        if (in_direction.dot(at_normal) > 0)
         {
             update(at_point, in_direction);
             return;
@@ -29,8 +29,8 @@ void Ray::reflect(const Vec3& at_point, const Vec3& at_normal, const double fuzz
 
 void Ray::scatter(const Vec3& at_point, const Vec3& at_normal)
 {
-    Vec3 in_direction{at_normal + getRandomUnitVec3()};
-    if (nearZero(direction))
+    Vec3 in_direction{at_normal + Vec3::getRandomUnit()};
+    if (direction.isNearZero())
     {
         assert("Tried to scatter but direction was near zero");
     }
@@ -50,8 +50,8 @@ void Ray::refract(const Vec3& at_point, const Vec3& at_normal, const double refr
         refractive_ratio = getRefractiveRatio(false);
         refraction_log.pop_back();
     }
-    const Vec3 perpendicular {refractive_ratio * (normalised(direction) + cosine_term * at_normal)};
-    const Vec3 parallel {-std::sqrt(std::abs(1.0 - perpendicular.length_squared())) * at_normal};
+    const Vec3 perpendicular {refractive_ratio * (direction.getNormalised() + cosine_term * at_normal)};
+    const Vec3 parallel {-std::sqrt(std::abs(1.0 - perpendicular.lengthSquared())) * at_normal};
     const Vec3 refracted_direction{perpendicular + parallel};
     update(at_point, refracted_direction);
 }

@@ -39,10 +39,10 @@ Vec3& Vec3::operator/=(const double t)
 
 double Vec3::length() const
 {
-    return std::sqrt(length_squared());
+    return std::sqrt(lengthSquared());
 }
 
-double Vec3::length_squared() const
+double Vec3::lengthSquared() const
 {
     return values[0]*values[0] + values[1]*values[1] + values[2]*values[2];
 }
@@ -88,37 +88,37 @@ Vec3 operator/(const Vec3& vec3, const double t)
     return vec3 * (1/t);
 }
 
-double dot(const Vec3& v1, const Vec3& v2)
+double Vec3::dot(const Vec3& vec) const
 {
-    return v1[0]*v2[0] + v1[1]*v2[1] + v1[2]*v2[2];
+    return values[0]*vec[0] + values[1]*vec[1] + values[2]*vec[2];
 }
 
-Vec3 cross(const Vec3& v1, const Vec3& v2)
+Vec3 Vec3::cross(const Vec3& vec) const
 {
     return Vec3
     {
-        v1[1] * v2[2] - v1[2] * v2[1],
-        v1[2] * v2[0] - v1[0] * v2[2],
-        v1[0] * v2[1] - v1[1] * v2[0]
+        values[1] * vec[2] - values[2] * vec[1],
+        values[2] * vec[0] - values[0] * vec[2],
+        values[0] * vec[1] - values[1] * vec[0]
     };
 }
 
-Vec3 normalised(const Vec3& vec3)
+Vec3 Vec3::getNormalised() const
 {
-    return vec3 / vec3.length();
+    return *this/this->length();
 }
 
-Vec3 getRandomVec3(const Interval& interval)
+Vec3 Vec3::getRandom(const Interval& interval)
 {
     return Vec3{Random::getRandom(interval), Random::getRandom(interval), Random::getRandom(interval)};
 }
 
-Vec3 getRandomUnitVec3()
+Vec3 Vec3::getRandomUnit()
 {
     while (true)
     {
-        Vec3 sample{getRandomVec3(DefinedIntervals::unit)};
-        const double length_squared{sample.length_squared()};
+        Vec3 sample{getRandom(DefinedIntervals::unit)};
+        const double length_squared{sample.lengthSquared()};
         if (1e-160 < length_squared && length_squared <= 1)
         {
             return sample / std::sqrt(length_squared);
@@ -126,22 +126,22 @@ Vec3 getRandomUnitVec3()
     }
 }
 
-Vec3 onHemisphere(const Vec3& unit_vector, const Vec3& normal)
+Vec3 Vec3::getOnHemisphere(const Vec3& unit_vector, const Vec3& normal)
 {
-    if (dot(unit_vector, normal) > 0.0)
+    if (unit_vector.dot(normal) > 0.0)
     {
         return unit_vector;
     }
     return -unit_vector;
 }
 
-Vec3 reflectVec3(const Vec3& vec, const Vec3& normal)
+Vec3 Vec3::getReflected(const Vec3& vec, const Vec3& normal)
 {
-    return vec - 2*dot(vec, normal)*normal;
+    return vec - 2*vec.dot(normal)*normal;
 }
 
-bool nearZero(const Vec3& vec)
+bool Vec3::isNearZero() const
 {
     const double limit {1e-8};
-    return std::fabs(vec[0]) < limit && std::fabs(vec[1]) < limit && std::fabs(vec[2]) < limit;
+    return std::fabs(values[0]) < limit && std::fabs(values[1]) < limit && std::fabs(values[2]) < limit;
 }

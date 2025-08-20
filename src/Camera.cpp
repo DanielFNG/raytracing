@@ -50,9 +50,9 @@ void Camera::deriveGeometricParameters()
 {
     const double twist_rad{twist*M_PI/180.0};
     const Vec3 twist_vector{-std::sin(twist_rad),std::cos(twist_rad),0};
-    viewport_dz = normalised(-direction);
-    viewport_dx = normalised(cross(twist_vector, viewport_dz));
-    viewport_dy = cross(viewport_dz, viewport_dx);
+    viewport_dz = (-direction).getNormalised();
+    viewport_dx = twist_vector.cross(viewport_dz).getNormalised();
+    viewport_dy = viewport_dz.cross(viewport_dx);
     const Vec3 scaled_viewport_dx{viewport_dx*viewport_width};
     const Vec3 scaled_viewport_dy{-viewport_dy*viewport_height};
     pixel_dx = scaled_viewport_dx/config.image_width;
@@ -156,7 +156,7 @@ Vec3 Camera::sampleOrigin() const
             Random::getRandom(DefinedIntervals::unit),
             0.0
         };
-        if (point_in_unit_disc.length_squared() < 1)
+        if (point_in_unit_disc.lengthSquared() < 1)
         {
             return origin + point_in_unit_disc[0] * defocus_region_dx + point_in_unit_disc[1] * defocus_region_dy;
         }
@@ -204,7 +204,7 @@ Vec3 Camera::ray_colour(Ray& ray, const Scene& scene) const
 
 Vec3 Camera::background_colour(const Ray& ray) const
 {
-    Vec3 normalised_direction{normalised(ray.getDirection())};
+    Vec3 normalised_direction{ray.getDirection().getNormalised()};
     const double a {0.5*(normalised_direction[1] + 1.0)};
     return Vec3{(1 - a)*Vec3{1,1,1} + a*Vec3{0.5,0.7,1.0} };
 }
