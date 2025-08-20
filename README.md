@@ -1,6 +1,15 @@
 # raytracing
-Implementation of CPU raytracer following along with the Ray Tracing In One Weekend series by Peter Shirley.
+Implementation of CPU raytracer following along with the Ray Tracing In One Weekend series by Peter Shirley. This is an active work in progress. 
 
-Work in progress - next stop the chapter on dielectrics.
+Currently status: completed the first book, yet to start the second. 
 
-![Render of some spheres with various properties](images/rt.png "Progress so far")
+Some snapshots of progress so far:
+
+### Metals and Lambertian Spheres
+![A render of some metallic or Lambertian spheres](images/metals.png)
+
+### Glass materials, and moveable camera with depth of field
+![Render of some spheres, including one made of glass, with a movable camera and depth of field](images/depth_of_field.png)
+
+### Example image from end of Book 1
+![Render of random sphere with various properties](images/spheres.png "Finished book 1")
