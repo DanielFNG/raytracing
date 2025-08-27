@@ -7,6 +7,9 @@
 #include "Utilities.h"
 #include "Interval.h"
 #include <execution>
+#include <fstream>
+#include <filesystem>
+#include <iostream>
 
 Camera::Camera(const CameraConfig& input_config, const Vec3& origin, const Vec3& direction, const double twist)
     : config{input_config}, origin{origin}, direction{direction}, twist{twist}
@@ -64,21 +67,51 @@ void Camera::deriveGeometricParameters()
     defocus_region_dy = viewport_dy*defocus_radius;
 }
 
-void Camera::render(const Scene& scene, const bool parallel) const
+void Camera::render(Scene& scene, const std::string& filepath, const Interval& interval, const bool parallel) const
 {
     // Allow user-requested sequential rendering. Otherwise, use parallel if possible.
+    scene.setTimeInterval(interval);
+    std::ofstream out{filepath};
     if (!parallel)
     {
-        renderSequential(scene);
+        renderSequential(scene, out);
     }
     #if defined(USE_OPENMP)
-        renderParallel(scene);
+        renderParallel(scene, out);
     #else
         renderSequential(scene);
     #endif
+    out.close();
 }
 
-void Camera::renderParallel(const Scene& scene) const
+void Camera::render(Scene& scene, const std::string& filepath, const double time, const bool parallel) const
+{
+    render(scene, filepath, Interval{time, time}, parallel);
+}
+
+void Camera::renderAnimation(Scene& scene, const std::string& directory, const Interval& interval, const bool motion_blur, const bool parallel, const std::string& filename) const
+{
+    const double frametime{1/config.framerate};
+    const std::filesystem::path folder{directory};
+    std::filesystem::create_directory(folder);
+    const int n_frames{static_cast<int>(std::ceil((interval.max - interval.min)*config.framerate))};
+    double time{interval.min};
+    for (int i{0}; i < n_frames; ++i)
+    {
+        const std::filesystem::path path{folder/(filename + std::to_string(i) + ".ppm")};
+        if (motion_blur)
+        {
+            render(scene, path, Interval{time, std::min(interval.max, time + frametime)});
+        }
+        else
+        {
+            render(scene, path, time, parallel);
+        }
+        time += frametime;
+    }
+}
+
+void Camera::renderParallel(Scene& scene, std::ofstream& file) const
 {
     int n_rows{image_height};
     std::clog << "Rendering rows. Remaining: " << n_rows << "\n";
@@ -95,10 +128,10 @@ void Camera::renderParallel(const Scene& scene) const
         std::clog << "Rendering rows. Remaining: " << n_rows << "\n";
         n_rows -= 1;
     }
-    PGM::writeHeader(config.image_width, image_height);
+    PGM::writeHeader(file, config.image_width, image_height);
     for (const Vec3& pixel_colour : pixel_colours)
     {
-        PGM::writeRGBTriple(pixel_colour);
+        PGM::writeRGBTriple(file, pixel_colour);
     }
 
     // I wanted to try a native C++ implementation but this wouldn't run in parallel on my Mac,
@@ -118,9 +151,9 @@ void Camera::renderParallel(const Scene& scene) const
     */
 }
 
-void Camera::renderSequential(const Scene& scene) const
+void Camera::renderSequential(Scene& scene, std::ofstream& file) const
 {
-    PGM::writeHeader(config.image_width, image_height);
+    PGM::writeHeader(file, config.image_width, image_height);
     for (int j{0}; j < image_height; ++j)
     {
         std::clog << "Rendering. Rows remaining: " << image_height - j << " " << std::endl;
@@ -128,7 +161,7 @@ void Camera::renderSequential(const Scene& scene) const
         {
             const Vec3 pixel_location {pixel_origin + (i * pixel_dx) + (j * pixel_dy)};
             const Vec3 pixel_colour {colourPixel(pixel_location, scene)};
-            PGM::writeRGBTriple(pixel_colour);
+            PGM::writeRGBTriple(file, pixel_colour);
         }
     }
     std::clog << "Rendering complete.\n";
@@ -163,14 +196,15 @@ Vec3 Camera::sampleOrigin() const
     }
 }
 
-Vec3 Camera::colourSubpixel(const Vec3& subpixel_location, const Scene& scene) const
+Vec3 Camera::colourSubpixel(const Vec3& subpixel_location, Scene& scene) const
 {
     const Vec3 ray_origin{sampleOrigin()};
+    scene.sample();
     Ray ray_to_pixel{ray_origin, subpixel_location - ray_origin, scene.getRefractiveIndex()};
     return ray_colour(ray_to_pixel, scene);
 }
 
-Vec3 Camera::colourPixel(const Vec3& pixel_location, const Scene& scene) const
+Vec3 Camera::colourPixel(const Vec3& pixel_location, Scene& scene) const
 {
     Vec3 colour{};
     const std::vector<Vec3> subpixel_locations {samplePixel(pixel_location)};

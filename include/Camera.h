@@ -4,6 +4,7 @@
 #include "Vec3.h"
 #include "Ray.h"
 #include "Scene.h"
+#include <fstream>
 
 
 struct CameraConfig
@@ -13,6 +14,7 @@ struct CameraConfig
     double focus_distance{1.0};
     double field_of_view{90};
     double defocus_angle{0};
+    double framerate{10.0};
     int anti_aliasing_samples{50};
     int max_depth{10};
 };
@@ -27,19 +29,21 @@ public:
 
     Vec3 sampleOrigin() const;
 
-    void render(const Scene& scene, bool parallel = true) const;
+    void render(Scene& scene, const std::string& filepath, double time = 0.0, bool parallel = true) const;
+    void render(Scene& scene, const std::string& filepath, const Interval& interval, bool parallel = true) const;
+    void renderAnimation(Scene& scene, const std::string& directory, const Interval& interval, bool motion_blur = false, bool parallel = true, const std::string& filename = "frame") const;
 
 private:
     void updateParameters();
     void deriveCameraParameters();
     void deriveGeometricParameters();
 
-    void renderSequential(const Scene& scene) const;
-    void renderParallel(const Scene& scene) const;
+    void renderSequential(Scene& scene, std::ofstream& file) const;
+    void renderParallel(Scene& scene, std::ofstream& file) const;
 
     std::vector<Vec3> samplePixel(const Vec3& pixel_location) const;
-    Vec3 colourPixel(const Vec3& pixel_location, const Scene& scene) const;
-    Vec3 colourSubpixel(const Vec3& subpixel_location, const Scene& scene) const;
+    Vec3 colourPixel(const Vec3& pixel_location, Scene& scene) const;
+    Vec3 colourSubpixel(const Vec3& subpixel_location, Scene& scene) const;
     Vec3 getRandomSubpixel(const Vec3& pixel_location) const;
 
     Vec3 ray_colour(Ray& ray, const Scene& scene) const;

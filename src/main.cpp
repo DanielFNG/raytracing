@@ -10,20 +10,21 @@ int main()
     constexpr CameraConfig camera_config
     {
         .aspect_ratio = 16.0/9.0,
-        .image_width = 400,
+        .image_width = 640,
         .focus_distance = 10.0,
-        .field_of_view = 35,
-        .defocus_angle = 0.2,
-        .anti_aliasing_samples = 50,
-        .max_depth = 50,
+        .field_of_view = 34,
+        .defocus_angle = 0.6,
+        .framerate = 2,
+        .anti_aliasing_samples = 100,
+        .max_depth = 10,
     };
     Camera camera{camera_config, camera_origin};
     camera.lookAt(Vec3{0,0,0});
 
     const Lambertian ground{Vec3{0.5, 0.5, 0.5}};
 
-    Scene world{1.0};
-    world.add(Sphere(Vec3{0,-1000,0}, 1000, ground));
+    Scene scene{1.0};
+    scene.add(Sphere(Vec3{0,-1000,0}, 1000, ground));
 
     for (int a{-11}; a < 11; ++a)
     {
@@ -31,13 +32,14 @@ int main()
         {
             const double choose_mat{Random::getRandom()};
             const Vec3 centre{a + 0.9*Random::getRandom(), 0.2, b + 0.9*Random::getRandom()};
+            const Newtonian dynamics{centre, {0.0, Random::getRandom(Interval{0.0, 0.5}), 0.0}, {0.0,0.0,0.0}};
 
             if ((centre - Vec3{4,0.2,0}).length() > 0.9)
             {
                 if (choose_mat < 0.5)
                 {
                     const Lambertian material{Vec3::getRandom()*Vec3::getRandom()};
-                    world.add(Sphere{centre, 0.2, material});
+                    scene.add(Sphere{centre, 0.2, material, dynamics});
                 }
                 else if (choose_mat < 0.85)
                 {
@@ -46,12 +48,12 @@ int main()
                         Vec3::getRandom(Interval(0.5, 1)),
                         Random::getRandom(Interval(0, 0.4))
                     };
-                    world.add(Sphere{centre, 0.2, material});
+                    scene.add(Sphere{centre, 0.2, material, dynamics});
                 }
                 else
                 {
                     const Refractor material{Vec3::getRandom(), 1.5};
-                    world.add(Sphere{centre, 0.2, material});
+                    scene.add(Sphere{centre, 0.2, material, dynamics});
                 }
             }
         }
@@ -61,9 +63,11 @@ int main()
     const Reflector metal{Vec3{0.7, 0.6, 0.5}, 0.0};
     const Refractor glass{Vec3{1.0, 1.0, 1.0}, 1.5};
 
-    world.add(Sphere{Vec3{0.0,1.0,0.0}, 1.0, glass});
-    world.add(Sphere{Vec3{-4,1,0}, 1.0, lambertian});
-    world.add(Sphere{Vec3{4.0,1.0,0.0}, 1.0, metal});
+    scene.add(Sphere{Vec3{6.0,2.0,3.0}, 2.0, metal});
+    scene.add(Sphere{Vec3{0.0, 3.0, -5}, 3.0, metal});
 
-    camera.render(world);
+    //camera.render(scene, "/Users/daniel/Documents/GitHub/raytracing/test1.ppm", 0.5);  // Render without motion blur
+    camera.render(scene, "/Users/daniel/Documents/GitHub/raytracing/rt.ppm", Interval{0.0, 1.0});  // Render with motion blur
+    //camera.renderAnimation(scene, "/Users/daniel/Documents/GitHub/raytracing/no-motion-blur-2", Interval{0.0, 5.0}, false); // Render a series of frames without motion blur
+    //camera.renderAnimation(scene, "/Users/daniel/Documents/GitHub/raytracing/motion-blur-2", Interval{0.0, 5.0}, true); // Render a series of frames with motion blur
 }

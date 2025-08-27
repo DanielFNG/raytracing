@@ -9,18 +9,21 @@
 class Sphere : public HittableEntity
 {
 public:
+    Sphere(const Vec3& origin, const double radius, const Material& material, const Dynamics& dynamics)
+        : HittableEntity(origin, material, dynamics), radius{radius}
+    {}
+
     Sphere(const Vec3& origin, const double radius, const Material& material)
-        : HittableEntity(material), origin{origin}, radius{radius}
+        : HittableEntity(origin, material), radius{radius}
     {}
 
     Sphere(const Sphere& sphere)
-        : HittableEntity(sphere.getMaterial()), origin{sphere.origin}, radius{sphere.radius}
+        : HittableEntity(sphere), radius{sphere.radius}
     {}
 
     Hit getRayHit(const Ray& ray, const Interval& interval) const override;
 
 private:
-    Vec3 origin{};
     double radius{};
 };
 

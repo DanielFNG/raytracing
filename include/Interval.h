@@ -19,6 +19,7 @@ namespace DefinedIntervals
     static constexpr Interval random_pixel{-0.5, 0.5};
     static constexpr Interval canonical{0, 1};
     static constexpr Interval unit{-1, 1};
+    static constexpr Interval zero{0,0};
 }
 
 #endif //INTERVAL_H

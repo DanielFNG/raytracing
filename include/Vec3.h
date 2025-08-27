@@ -1,7 +1,7 @@
 #ifndef VEC3_H
 #define VEC3_H
 
-#include <iostream>
+#include <fstream>
 #include <array>
 #include "Interval.h"
 
@@ -36,6 +36,7 @@ struct Vec3
 };
 
 std::ostream& operator<<(std::ostream& out, const Vec3& vec3);
+void operator<<(std::ofstream& outfile, const Vec3& vec3);
 Vec3 operator+(const Vec3& v1, const Vec3& v2);
 Vec3 operator-(const Vec3& v1, const Vec3& v2);
 Vec3 operator*(const Vec3& v1, const Vec3& v2);

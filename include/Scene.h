@@ -33,10 +33,14 @@ public:
 
     Hit getClosestHit(const Ray& ray, const Interval& interval) const;
 
+    void setTimeInterval(const Interval& new_interval);
+    void sample();
+
 
 private:
     std::vector<std::unique_ptr<HittableEntity>> entities{};
     double refractive_index{};
+    Interval interval{DefinedIntervals::zero};
 };
 
 #endif //SCENE_H

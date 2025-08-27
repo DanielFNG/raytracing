@@ -58,6 +58,11 @@ std::ostream& operator<<(std::ostream& out, const Vec3& vec3)
     return out << vec3.values[0] << " " << vec3.values[1] << " " << vec3.values[2];
 }
 
+void operator<<(std::ofstream& outfile, const Vec3& vec3)
+{
+    outfile << vec3.values[0] << " " << vec3.values[1] << " " << vec3.values[2];
+}
+
 Vec3 operator+(const Vec3& v1, const Vec3& v2)
 {
     return Vec3{v1[0] + v2[0], v1[1] + v2[1], v1[2] + v2[2]};
