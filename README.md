@@ -16,14 +16,16 @@ Some snapshots of progress so far:
 
 ### Moving Objects & Motion Blur 
 
-![Still image with motion blur from moving spheres](images/motion_blur.ppm "Motion Blur")
+![Still image with motion blur from moving spheres](images/motion_blur.png "Motion Blur")
 
 ### Making Animations
 
 Without motion blur:
+
 ![An animation without motion blur](https://github.com/user-attachments/assets/ffe5c3ff-5e04-4d05-9de5-0bce11b95693)
 
 With motion blur:
+
 ![An animation with motion blur](https://github.com/user-attachments/assets/7327fce6-8400-4c87-8518-2579a34cc921)
 
 
