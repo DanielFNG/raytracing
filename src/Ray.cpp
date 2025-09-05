@@ -8,6 +8,11 @@ Vec3 Ray::at(const double t) const
     return getOrigin() + direction * t;
 }
 
+double Ray::at(const Vec3& point_on_ray) const
+{
+    return (point_on_ray[0] - getOrigin()[0])/direction[0];
+}
+
 void Ray::reflect(const Vec3& at_point, const Vec3& at_normal, const double fuzz)
 {
     Vec3 in_direction{Vec3::getReflected(direction, at_normal)};

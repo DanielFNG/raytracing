@@ -9,6 +9,7 @@ struct Interval
     double max{};
 
     bool contains(double x) const;
+    Interval intersect(const Interval& interval) const;
 };
 
 namespace DefinedIntervals

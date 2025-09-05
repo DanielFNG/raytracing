@@ -20,8 +20,11 @@ struct Vec3
     double length() const;
     double lengthSquared() const;
 
-    Vec3& normalise();
+    void normalise();
+
     Vec3 getNormalised() const;
+    static Vec3 getNormalised(Vec3&& vec);
+    Vec3 getAbsolute() const;
 
     double dot(const Vec3& vec) const;
     Vec3 cross(const Vec3& vec) const;
@@ -43,5 +46,6 @@ Vec3 operator*(const Vec3& v1, const Vec3& v2);
 Vec3 operator*(double t, const Vec3& vec3);
 Vec3 operator*(const Vec3& vec3, double t);
 Vec3 operator/(const Vec3& vec3, double t);
+Vec3 operator/(const Vec3& a, const Vec3& b);
 
 #endif //VEC3_H

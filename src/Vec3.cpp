@@ -1,5 +1,6 @@
 #include "Vec3.h"
 #include "Utilities.h"
+#include <cassert>
 
 double& Vec3::operator[](const int i)
 {
@@ -47,11 +48,16 @@ double Vec3::lengthSquared() const
     return values[0]*values[0] + values[1]*values[1] + values[2]*values[2];
 }
 
-Vec3& Vec3::normalise()
+void Vec3::normalise()
 {
-    return *this /= length();
+    *this /= this->length();
 }
 
+Vec3 Vec3::getNormalised(Vec3&& vec)
+{
+    vec /= vec.length();
+    return vec;
+}
 
 std::ostream& operator<<(std::ostream& out, const Vec3& vec3)
 {
@@ -90,7 +96,14 @@ Vec3 operator*(const double t, const Vec3& vec3)
 
 Vec3 operator/(const Vec3& vec3, const double t)
 {
+    assert((t !=0) && "Zero division");
     return vec3 * (1/t);
+}
+
+Vec3 operator/(const Vec3& a, const Vec3& b)
+{
+    assert((b[0] != 0 && b[1] != 0 && b[2] !=0) && "Zero division");
+    return Vec3{a[0]/b[0], a[1]/b[1], a[2]/b[2]};
 }
 
 double Vec3::dot(const Vec3& vec) const
@@ -143,6 +156,11 @@ Vec3 Vec3::getOnHemisphere(const Vec3& unit_vector, const Vec3& normal)
 Vec3 Vec3::getReflected(const Vec3& vec, const Vec3& normal)
 {
     return vec - 2*vec.dot(normal)*normal;
+}
+
+Vec3 Vec3::getAbsolute() const
+{
+    return Vec3{std::abs(values[0]), std::abs(values[1]), std::abs(values[2])};
 }
 
 bool Vec3::isNearZero() const

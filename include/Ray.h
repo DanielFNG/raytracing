@@ -16,6 +16,7 @@ public:
     }
 
     Vec3 at(double t) const;
+    double at(const Vec3& point_on_ray) const;
 
     const Vec3& getDirection() const {return direction;}
     const Vec3& getOrigin() const {return points.back();}

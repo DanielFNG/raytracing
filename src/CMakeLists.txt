@@ -8,4 +8,5 @@ add_executable(raytracer
         Camera.cpp
         Scene.cpp
         Material.cpp
+        Cuboid.cpp
 )

@@ -1,13 +1,13 @@
 #include "Scene.h"
 #include "Utilities.h"
 
-Hit Scene::getClosestHit(const Ray& ray, const Interval& interval) const
+Hit Scene::getClosestHit(const Ray& ray, const Interval& space_interval) const
 {
-    double closest_so_far{interval.max};
+    double closest_so_far{space_interval.max};
     Hit closest_hit {};
     for (const std::unique_ptr<HittableEntity>& entity : entities)
     {
-        Hit hit{entity->getRayHit(ray, Interval{interval.min, closest_so_far})};
+        Hit hit{entity->getRayHit(ray, Interval{space_interval.min, closest_so_far})};
         if (hit)
         {
             closest_so_far = hit.t;
